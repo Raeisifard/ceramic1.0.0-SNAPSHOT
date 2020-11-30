@@ -19,7 +19,7 @@
     <vertx.version>3.9.4</vertx.version>
     <junit-jupiter.version>5.4.0</junit-jupiter.version>
 
-    <main.verticle>com.ceramic.core.main.MainVerticle</main.verticle>
+    <main.verticle>com.ceramic.core.MainVerticle</main.verticle>
   </properties>
 
   <dependencyManagement>
@@ -56,6 +56,11 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit-jupiter.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-config</artifactId>
+      <version>3.9.4</version>
     </dependency>
   </dependencies>
 

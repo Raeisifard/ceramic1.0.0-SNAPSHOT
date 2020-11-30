@@ -1,0 +1,23 @@
+{
+  "verticles": [
+    {
+      "name": "HttpServerSecure",
+      "description": "Http server with auth mongo",
+      "main": "com.vx6.worker.HttpServerSecure",
+      "deploy": false,
+      "options": {
+        "config": {
+          "http-port": 8090,
+          "ws-port": 8090,
+          "db": {
+            "name": "mongoDB",
+            "connection_string": "mongodb://localhost:27017",
+            "db_name": "user"
+          }
+        },
+        "instances": 1,
+        "worker": false
+      }
+    }
+  ]
+}
