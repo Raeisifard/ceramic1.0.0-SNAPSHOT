@@ -1,19 +1,86 @@
 {
+  "default": {
+    "http-port": 8888,
+    "server": true
+  },
   "verticles": [
     {
-      "name": "HttpServerSecure",
-      "description": "Http server with auth mongo",
-      "main": "com.vx6.worker.HttpServerSecure",
+      "name": "HttpVerticle",
+      "description": "Http server with initial main router",
+      "main": "com.ceramic.server.HttpVerticle",
+      "deploy": true,
+      "options": {
+        "config": {
+          "http-port": "default",
+          "server": "default",
+          "location": "/stt/index.html"
+        },
+        "instances": 1,
+        "worker": false
+      }
+    },
+    {
+      "name": "FreeboardSseVerticle",
+      "description": "HTML Server-Sent Event",
+      "main": "com.ceramic.server.FreeboardSseVerticle",
+      "deploy": true,
+      "options": {
+        "config": {
+          "http-port": "default",
+          "server": "default",
+          "location": "/stt/freeboard/index-dev.html",
+          "retry": 5000,
+          "eb_address": "/freeboard/sse/suny"
+        },
+        "instances": 1,
+        "worker": false
+      }
+    },
+    {
+      "name": "SunyBsiSseVerticle",
+      "description": "Data Pusher for 'Suny' system",
+      "main": "com.ceramic.server.SseSunyVerticle",
       "deploy": false,
       "options": {
         "config": {
-          "http-port": 8090,
-          "ws-port": 8090,
-          "db": {
-            "name": "mongoDB",
-            "connection_string": "mongodb://localhost:27017",
-            "db_name": "user"
+          "http-port": "default",
+          "server": "default",
+          "retry": 5000,
+          "bank_name": "bsi",
+          "eb_address": "suny.bsi.sse",
+          "sql_server": {
+            "ip": "192.168.41.114",
+            "port": "1433",
+            "database": "suny_bxx11",
+            "user": "sa",
+            "pass": "suny$123"
           }
+        },
+        "instances": 1,
+        "worker": false
+      }
+    },
+    {
+      "name": "BarVerticle",
+      "description": "Other sub_router define",
+      "main": "com.ceramic.server.BarVerticle",
+      "deploy": false,
+      "options": {
+        "config": {
+          "http-port": "default"
+        },
+        "instances": 1,
+        "worker": false
+      }
+    },
+    {
+      "name": "FooVerticle",
+      "description": "Other sub_router define",
+      "main": "com.ceramic.server.FooVerticle",
+      "deploy": false,
+      "options": {
+        "config": {
+          "http-port": "default"
         },
         "instances": 1,
         "worker": false

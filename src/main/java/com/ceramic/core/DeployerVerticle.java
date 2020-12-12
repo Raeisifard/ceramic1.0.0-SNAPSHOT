@@ -46,7 +46,7 @@ public class DeployerVerticle extends AbstractVerticle {
           });
         }
       }
-      logger.info(deployedVerticles + "verticles deployed successfully.");
+      logger.info(deployedVerticles + " verticles deployed successfully.");
     }
   }
 

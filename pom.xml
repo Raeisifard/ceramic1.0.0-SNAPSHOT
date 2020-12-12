@@ -62,6 +62,11 @@
       <artifactId>vertx-config</artifactId>
       <version>3.9.4</version>
     </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-sse</artifactId>
+      <version>1.0.0</version>
+    </dependency>
   </dependencies>
 
   <build>
