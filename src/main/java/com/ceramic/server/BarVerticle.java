@@ -22,7 +22,8 @@ public class BarVerticle extends AbstractVerticle {
       rc.response().putHeader("ContentType", "text/html")
         .end("<html><body><strong>bar</strong></body></html>");
     });
-    final Router main = ShareableRouter.router(vertx).mountSubRouter("/1", router);
+    final Router main = ShareableRouter.router(vertx);
+    main.mountSubRouter("/1", router);
 		// start server
 		server.requestHandler(main).listen(config().getInteger("http-port"), lh -> {
 			if (lh.failed()) {

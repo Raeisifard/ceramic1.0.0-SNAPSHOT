@@ -13,9 +13,9 @@ public class DeployerVerticle extends AbstractVerticle {
   Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
   // Convenience method so you can run it in your IDE
-  public static void main(String[] args) {
+/*  public static void main(String[] args) {
     Runner.runExample(DeployerVerticle.class);
-  }
+  }*/
 
   @Override
   public void start() throws Exception {

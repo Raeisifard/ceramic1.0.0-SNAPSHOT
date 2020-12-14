@@ -6,6 +6,7 @@ import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 
 public class FooVerticle extends AbstractVerticle {
@@ -22,7 +23,8 @@ public class FooVerticle extends AbstractVerticle {
       rc.response().putHeader("ContentType", "text/html")
         .end("<html><body><strong>foo</strong></body></html>");
     });
-    final Router main = ShareableRouter.router(vertx).mountSubRouter("/1", router);
+    final Router main = ShareableRouter.router(vertx);
+    main.mountSubRouter("/1", router);
     // start server
     server.requestHandler(main).listen(config().getInteger("http-port"), lh -> {
       if (lh.failed()) {

@@ -27,10 +27,10 @@ public class SseSunyVerticle extends AbstractVerticle {
   private final EventBusSSEBridge eventBusSSEBridge = EventBusSSEBridge.create();
   private Long timerId;
   private final String magicToken = "theOneThatRulesThemAll";
-
+private final Router router = Router.router(vertx);
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    var router = Router.router(vertx);
+    //var router = Router.router(vertx);
     router.get("/").handler(rc -> rc.reroute("/static/index.html"));
     router.get("/static/*").handler(staticFiles);
     eventBusSSEBridge.mapping(request ->
@@ -82,10 +82,10 @@ public class SseSunyVerticle extends AbstractVerticle {
     if (timerId != null) {
       vertx.cancelTimer(timerId);
     }
-    if (server == null) {
-      stopPromise.complete();
-      return;
+    if (this.server != null) {
+      this.server.close();
     }
-    server.close(stopPromise.future().completer());
+    router.clear();
+    stopPromise.complete();
   }
 }

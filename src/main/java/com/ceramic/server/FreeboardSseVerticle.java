@@ -36,7 +36,8 @@ public class FreeboardSseVerticle extends AbstractVerticle {
     router.get("/").handler(rc -> rc.response().setStatusCode(302).putHeader("location", config().getString("location")).end());
     router.get("/sse/*").handler(EventBusSSEBridge.create());
     //router.get("/*").handler(StaticHandler.create());
-    final Router main = ShareableRouter.router(vertx).mountSubRouter("/freeboard", router);
+    final Router main = ShareableRouter.router(vertx);
+    main.mountSubRouter("/freeboard", router);
     if (config().getBoolean("server")) {
       // start server
       this.server = vertx.createHttpServer().requestHandler(main).listen(this.http_port, http -> {
