@@ -64,7 +64,7 @@
       "name": "BarVerticle",
       "description": "Other sub_router define",
       "main": "com.ceramic.server.BarVerticle",
-      "deploy": false,
+      "deploy": true,
       "options": {
         "config": {
           "http-port": "default"

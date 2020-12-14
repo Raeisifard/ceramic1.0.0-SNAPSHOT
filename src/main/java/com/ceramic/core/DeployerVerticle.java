@@ -19,34 +19,38 @@ public class DeployerVerticle extends AbstractVerticle {
 
   @Override
   public void start() throws Exception {
-    JsonArray verticleList = config().getJsonArray("verticles");
-    int verticleListLength = verticleList.size();
-    logger.info("We found (" + verticleListLength + ") verticles to process.");
-    if (verticleListLength > 0) {//We have some "verticle" to deploy
-      AtomicInteger deployedVerticles = new AtomicInteger();
-      for (int i = 0; i < verticleListLength; i++) {
-        JsonObject vrt = verticleList.getJsonObject(i);
-        String vName = vrt.getString("main");
-        String vId = vrt.getString("id");
-        if (vName != null && vName.length() > 0 && vrt.getBoolean("deploy")) {
-          DeploymentOptions dO = vrt.getJsonObject("options") == null ? new DeploymentOptions() : setDeploymentOptions(vrt.getJsonObject("options"));
-          JsonObject config = dO.getConfig();
-          config.put("_id", vId);
-          dO.setConfig(config);
-          vertx.deployVerticle(vName, dO, res -> {
-            if (res.succeeded()) {
-              deployedVerticles.getAndIncrement();
-              String deploymentID = res.result();
+    if (config().containsKey("verticles")) {
+      JsonArray verticleList = config().getJsonArray("verticles");
+      int verticleListLength = verticleList.size();
+      logger.info("We found (" + verticleListLength + ") verticles to process.");
+      if (verticleListLength > 0) {//We have some "verticle" to deploy
+        AtomicInteger deployedVerticles = new AtomicInteger();
+        for (int i = 0; i < verticleListLength; i++) {
+          JsonObject vrt = verticleList.getJsonObject(i);
+          String vName = vrt.getString("main");
+          String vId = vrt.getString("id");
+          if (vName != null && vName.length() > 0 && vrt.getBoolean("deploy")) {
+            DeploymentOptions dO = vrt.getJsonObject("options") == null ? new DeploymentOptions() : setDeploymentOptions(vrt.getJsonObject("options"));
+            JsonObject config = dO.getConfig();
+            config.put("_id", vId);
+            dO.setConfig(config);
+            vertx.deployVerticle(vName, dO, res -> {
+              if (res.succeeded()) {
+                deployedVerticles.getAndIncrement();
+                String deploymentID = res.result();
 
-              System.out.println("BusVerticle \"" + vName + "\" deployed [OK], deploymentID = " + deploymentID);
+                System.out.println("BusVerticle \"" + vName + "\" deployed [OK], deploymentID = " + deploymentID);
 
-            } else {
-              res.cause().printStackTrace();
-            }
-          });
+              } else {
+                res.cause().printStackTrace();
+              }
+            });
+          }
         }
+        logger.info(deployedVerticles + " verticles deployed successfully.");
       }
-      logger.info(deployedVerticles + " verticles deployed successfully.");
+    }else{
+      System.out.println("There is no verticles in config file for deploy!");
     }
   }
 

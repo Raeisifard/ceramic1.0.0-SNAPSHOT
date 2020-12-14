@@ -33,10 +33,10 @@ public class StartConfig {
       Future<JsonObject> future = newRetriever.getConfig();
       future.onComplete(ar -> {
         if (ar.failed()) {
-          // Failed to retrieve the configuration
+          System.out.println("Failed to retrieve the configuration!");
         } else {
           JsonObject config = ar.result();
-          System.out.println("Second Config:"+config.toString());
+          newVertx.deployVerticle(MainVerticle.class.getName(), new DeploymentOptions().setConfig(config));
         }
       });
       newRetriever.listen(change -> {
@@ -44,8 +44,6 @@ public class StartConfig {
         newVertx.eventBus().publish("new-configuration", json);
         System.out.println("Config:"+json.toString());
       });
-      // Deploy your verticle
-      newVertx.deployVerticle(MainVerticle.class.getName(), new DeploymentOptions().setConfig(result));
     });
   }
 }

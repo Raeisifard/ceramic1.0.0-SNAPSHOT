@@ -29,6 +29,11 @@ public class MainVerticle extends AbstractVerticle {
         });
     }
     vertx.deployVerticle(DeployerVerticle.class.getName(),
-      new DeploymentOptions().setConfig(new JsonObject().put("verticles", verticleList)));
+      new DeploymentOptions().setConfig(new JsonObject().put("verticles", verticleList)), res->{
+        if(res.succeeded())
+          startPromise.complete();
+        else
+          startPromise.fail(res.cause());
+      });
   }
 }
