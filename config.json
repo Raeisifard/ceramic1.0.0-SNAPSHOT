@@ -1,4 +1,5 @@
 {
+  "DEFAULT_BLOCKED_THREAD_CHECK_INTERVAL": 2000000,
   "default": {
     "http-port": 8888,
     "server": true
@@ -61,10 +62,27 @@
       }
     },
     {
+      "name": "SQLServerVerticle",
+      "description": "SQL Server Connection",
+      "main": "com.ceramic.service.SQLServer",
+      "deploy": true,
+      "options": {
+        "config": {
+          "ip": "192.168.166.11",
+          "port": 1433,
+          "dbName": "tat_suny_new",
+          "user": "sa",
+          "password": "suny$123"
+        },
+        "instances": 1,
+        "worker": false
+      }
+    },
+    {
       "name": "BarVerticle",
       "description": "Other sub_router define",
       "main": "com.ceramic.server.BarVerticle",
-      "deploy": true,
+      "deploy": false,
       "options": {
         "config": {
           "http-port": "default"
