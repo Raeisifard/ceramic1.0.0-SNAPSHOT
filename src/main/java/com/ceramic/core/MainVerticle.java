@@ -5,11 +5,17 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.shareddata.LocalMap;
+import io.vertx.core.shareddata.SharedData;
+import io.vertx.ext.healthchecks.HealthCheckHandler;
 
 public class MainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
+    //SharedData sharedData = vertx.sharedData();
+    //LocalMap<String, HealthCheckHandler> sharedMap = sharedData.getLocalMap("health");
+    //sharedMap.put("global_health_check_handler", HealthCheckHandler.create(vertx));
     JsonArray verticleList = config().getJsonArray("verticles");
     if (config().containsKey("default")) {
       var def = config().getJsonObject("default");

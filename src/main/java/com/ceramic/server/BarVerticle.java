@@ -6,17 +6,25 @@ import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.core.shareddata.SharedData;
+import io.vertx.ext.healthchecks.HealthCheckHandler;
+import io.vertx.ext.healthchecks.HealthChecks;
+import io.vertx.ext.healthchecks.Status;
 import io.vertx.ext.web.Router;
 
 public class BarVerticle extends AbstractVerticle {
 
-	private static final Logger log = LoggerFactory.getLogger(BarVerticle.class);
+  private static final Logger log = LoggerFactory.getLogger(BarVerticle.class);
 
-	@Override
-	public void start(Promise<Void> startPromise) throws Exception {
-		log.info("Starting verticle {" + this + "}");
+  @Override
+  public void start(Promise<Void> startPromise) throws Exception {
+    log.info("Starting verticle {" + this + "}");
+    HealthChecks healthChecks = HealthChecks.create(vertx);
     HttpServer server = vertx.createHttpServer();
-
+    vertx.eventBus().consumer("bar.verticle.health",
+      message -> healthChecks.checkStatus()
+        .onSuccess(res -> message.reply("OK"))
+        .onFailure(err -> message.fail(0, err.getMessage())));
     final Router router = Router.router(vertx);
     router.route("/bar").handler(rc -> {
       rc.response().putHeader("ContentType", "text/html")
@@ -24,16 +32,17 @@ public class BarVerticle extends AbstractVerticle {
     });
     final Router main = ShareableRouter.router(vertx);
     main.mountSubRouter("/1", router);
-		// start server
-		server.requestHandler(main).listen(config().getInteger("http-port"), lh -> {
-			if (lh.failed()) {
+
+    // start server
+    server.requestHandler(main).listen(config().getInteger("http-port"), lh -> {
+      if (lh.failed()) {
         System.out.println("bar failed");
         startPromise.fail(lh.cause());
-			} else {
+      } else {
         startPromise.complete();
-			}
-		});
+      }
+    });
     //startPromise.complete();
-	}
+  }
 
 }

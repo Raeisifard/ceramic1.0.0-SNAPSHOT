@@ -20,6 +20,8 @@ public class HttpVerticle extends AbstractVerticle {
 
     router.get("/test").handler(ctx -> ctx.response().end("OK test"));
     //staticFiles.setIndexPage("/freeboard/index.html");
+    router.route("/lib/*").handler(StaticHandler.create("META-INF/resources/webjars"));
+    /*<link rel='stylesheet' href='stt/lib/vertx__eventbus-bridge-client.js/1.0.0-1/vertx-eventbus.js'>*/
     router.get("/*").handler(staticFiles);
     //mount the router as subrouter to the shared router
     final Router main = ShareableRouter.router(vertx);

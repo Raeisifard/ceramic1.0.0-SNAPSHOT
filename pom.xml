@@ -62,7 +62,7 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-sse</artifactId>
-      <version>1.0.0</version>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.vertx</groupId>
@@ -71,7 +71,21 @@
     <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>mssql-jdbc</artifactId>
-      <version>9.1.1.jre11-preview</version>
+      <version>8.4.1.jre11</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-sql-client-templates</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-health-check</artifactId>
+      <!--<version>4.0.1-SNAPSHOT</version>-->
+    </dependency>
+    <dependency>
+      <groupId>	org.webjars.npm</groupId>
+      <artifactId>	vertx__eventbus-bridge-client.js</artifactId>
+      <version>	1.0.0-1</version>
     </dependency>
   </dependencies>
 

@@ -65,14 +65,63 @@
       "name": "SQLServerVerticle",
       "description": "SQL Server Connection",
       "main": "com.ceramic.service.SQLServer",
-      "deploy": true,
+      "deploy": false,
       "options": {
         "config": {
           "ip": "192.168.166.11",
           "port": 1433,
-          "dbName": "tat_suny_new",
+          "dbName": "Suny",
           "user": "sa",
-          "password": "suny$123"
+          "password": "suny$123",
+          "sendAddress": "bsi.suny.sse.publisher",
+          "receiveAddress": "bsi.suny.sse.sql_server_verticle",
+          "query": "RECEIVE top(5) CAST(Message_Body AS xml) AS ReceivedMessage FROM dbo.MFTranQueue",
+          "queryType": "select",
+          "prepared": true,
+          "params": [],
+          "autoStart": true,
+          "autoNext": true
+        },
+        "instances": 1,
+        "worker": false
+      }
+    },
+    {
+      "name": "FreeboardEventBus",
+      "description": "Connection btw Freeboard & Vertx via Event-Bus",
+      "main": "com.ceramic.server.FreeboardEventBusVerticle",
+      "deploy": false,
+      "options": {
+        "config": {
+          "http-port": "default"
+        },
+        "instances": 1,
+        "worker": false
+      }
+    },
+    {
+      "name": "HealthCheck",
+      "description": "Health check verticle",
+      "main": "com.ceramic.server.HealthCheckVerticle",
+      "deploy": true,
+      "options": {
+        "config": {
+          "http-port": "default"
+        },
+        "instances": 1,
+        "worker": false
+      }
+    },
+    {
+      "name": "EventbusBridge",
+      "description": "Eventbus bridge verticle",
+      "main": "com.ceramic.server.EventBusBridgeVerticle",
+      "deploy": true,
+      "options": {
+        "config": {
+          "http-port": "default",
+          "inboundAddress": "freeboard.eventbus",
+          "outboundAddress": "eventbus.freeboard"
         },
         "instances": 1,
         "worker": false
@@ -82,7 +131,7 @@
       "name": "BarVerticle",
       "description": "Other sub_router define",
       "main": "com.ceramic.server.BarVerticle",
-      "deploy": false,
+      "deploy": true,
       "options": {
         "config": {
           "http-port": "default"
