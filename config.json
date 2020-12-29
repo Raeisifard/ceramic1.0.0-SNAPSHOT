@@ -21,9 +21,9 @@
       }
     },
     {
-      "name": "FreeboardSseVerticle",
-      "description": "HTML Server-Sent Event",
-      "main": "com.ceramic.server.FreeboardSseVerticle",
+      "name": "FreeboardApiVerticle",
+      "description": "Freeboard data-source api",
+      "main": "com.ceramic.server.FreeboardApiVerticle",
       "deploy": true,
       "options": {
         "config": {
@@ -65,7 +65,7 @@
       "name": "SQLServerVerticle",
       "description": "SQL Server Connection",
       "main": "com.ceramic.service.SQLServer",
-      "deploy": false,
+      "deploy": true,
       "options": {
         "config": {
           "ip": "192.168.166.11",
@@ -75,11 +75,11 @@
           "password": "suny$123",
           "sendAddress": "bsi.suny.sse.publisher",
           "receiveAddress": "bsi.suny.sse.sql_server_verticle",
-          "query": "RECEIVE top(5) CAST(Message_Body AS xml) AS ReceivedMessage FROM dbo.MFTranQueue",
+          "query": "RECEIVE top(1) CAST(Message_Body AS xml) AS ReceivedMessage FROM dbo.MFTranQueue",
           "queryType": "select",
           "prepared": true,
           "params": [],
-          "autoStart": true,
+          "autoStart": false,
           "autoNext": true
         },
         "instances": 1,

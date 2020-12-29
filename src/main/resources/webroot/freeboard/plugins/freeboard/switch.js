@@ -15,8 +15,8 @@
     var LOADING_INDICATOR_DELAY = 1000;
     var SWITCH_ID = 0;
     //
-   
-    
+
+    let urlOn, urlOff, value;
     freeboard.loadWidgetPlugin({
         type_name: "switch_plugin",
         display_name: "Switch",
@@ -62,29 +62,29 @@
     });
 
      freeboard.addStyle ('.floating-box',"display: inline-block; vertical-align: top; width: 78px; background-color: #222;margin-top: 10px; margin-right: 5px;");
-     
+
      freeboard.addStyle ('.onoffswitch-title',"font-size: 17px; line-height: 29px; width: 65%; height: 29px; padding-left: 10px;border: 1px solid #3d3d3d;");
      freeboard.addStyle ('.round' ,"border-radius: 50%;");
     var wswitch = function (settings) {
-        var self = this;    
+        var self = this;
         var thisWidgetId = "onoffswitch-" + SWITCH_ID++;
         var currentSettings = settings;
 
         var box1 =  $('<div class="floating-box"></div>');
         var box2 =  $('<div class="floating-box onoffswitch-title">' + settings.title + '</div>');
-        
+
         var onOffSwitch = $('<div class="onoffswitch"><label class="onoffswitch-label" for="'+ thisWidgetId +'"><div class="onoffswitch-inner"><span class="on"></span><span class="off"></span></div><div class="onoffswitch-switch round"></div></label></div>');
-        
-        
+
+
         //onOffSwitch.find("span.on").text("True");
-        
+
         onOffSwitch.prependTo(box1);
-        
+
         var isOn = false;
         var onText;
         var offText;
         var url;
-        
+
         function updateState() {
             console.log("isOn: " + isOn);
             $('#'+thisWidgetId).prop('checked', isOn);
@@ -92,7 +92,7 @@
             onOffSwitch.find("span.on").text(onText);
             onOffSwitch.find("span.off").text(offText);
         }
-        
+
         var alertContents = function () {
             if (request.readyState === XMLHttpRequest.DONE) {
                 if (request.status === 200) {
@@ -106,15 +106,15 @@
                     setTimeout(function(){
                         freeboard.showLoadingIndicator(false);
                         freeboard.showDialog($("<div align='center'>There was a problem with the request. Code " + request.status  + request.responseText + " </div>"),"Error!","OK",null,function(){});
-                    }, LOADING_INDICATOR_DELAY);  
+                    }, LOADING_INDICATOR_DELAY);
                 }
-                
+
             }
-            
+
         }
-         
+
         var request;
-        
+
         var sendValue = function (url, options) {
             console.log(url, options);
             request = new XMLHttpRequest();
@@ -129,20 +129,20 @@
         }
 
         this.render = function (element) {
-           
+
             $(element).append(box1).append(box2);
              var input = $('<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="'+ thisWidgetId +'">').prependTo(onOffSwitch).change(function()
                 {
                     isOn =!isOn;
                     console.log( thisWidgetId + ": toogled " + isOn);
-                    url = (isOn) ? currentSettings.urlOn: currentSettings.urlOff;
+                    url = (isOn) ? urlOn: urlOff;
                     if ( _.isUndefined(url) )
                         freeboard.showDialog($("<div align='center'>url undefined</div>"),"Error!","OK",null,function(){});
                     else {
                         sendValue(url, isOn);
-                 
+
                     }
-                    
+
                 });
         }
 
@@ -157,7 +157,7 @@
 
         this.onCalculatedValueChanged = function (settingName, newValue) {
             console.log(settingName, newValue);
-            
+
             if (settingName == "value") {
                 isOn = Boolean(newValue);
             }
@@ -169,11 +169,11 @@
             }
             updateState();
         }
-        
-       
-        
 
-        
+
+
+
+
         this.onDispose = function () {
         }
 

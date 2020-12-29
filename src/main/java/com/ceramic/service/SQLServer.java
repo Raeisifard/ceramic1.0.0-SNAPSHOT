@@ -12,6 +12,8 @@ import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLClient;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.UpdateResult;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 public class SQLServer extends AbstractVerticle {
@@ -61,6 +63,8 @@ public class SQLServer extends AbstractVerticle {
     if (!tMessage.body().toString().isEmpty()) {
       body = new JsonObject(tMessage.body().toString());
     }
+    if (StringUtils.isEmpty(cmd))
+      cmd = body.getString("cmd");
     switch (cmd) {
       case "set":
         if (body.containsKey("query"))
@@ -160,6 +164,10 @@ public class SQLServer extends AbstractVerticle {
               ResultSet resultSet = res1.result();
               this.rows = resultSet.getRows();
               this.count = rows.size();
+              if (rows.isEmpty()) {
+                publish();
+                return;
+              }
               publish(rows.remove(0));
             } else {
               res1.cause().printStackTrace();
@@ -184,6 +192,10 @@ public class SQLServer extends AbstractVerticle {
               ResultSet resultSet = res1.result();
               this.rows = resultSet.getRows();
               this.count = this.rows.size();
+              if (rows.isEmpty()) {
+                publish();
+                return;
+              }
               publish(rows.remove(0));
             } else {
               res1.cause().printStackTrace();
@@ -206,6 +218,10 @@ public class SQLServer extends AbstractVerticle {
     } else {
       this.rows = null;
     }
+  }
+
+  private void publish() {
+    this.eb.publish(this.sendAddress, new JsonObject(), new DeliveryOptions().addHeader("No", 0 + "").addHeader("count", count + ""));
   }
 
   @Override

@@ -3,30 +3,33 @@ package com.ceramic.server;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.DeliveryOptions;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.sse.EventBusSSEBridge;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.UUID;
 
-public class FreeboardSseVerticle extends AbstractVerticle {
+public class FreeboardApiVerticle extends AbstractVerticle {
   private int http_port;
   private Long timerId;
   private HttpServer server;
   private int retry = 5000;
   private String EB_ADDRESS = "sse.freeboard";
   private final EventBusSSEBridge eventBusSSEBridge = EventBusSSEBridge.create();
-  private final static Logger LOG = LoggerFactory.getLogger(FreeboardSseVerticle.class.getName());
+  private final static Logger LOG = LoggerFactory.getLogger(FreeboardApiVerticle.class.getName());
   private final Router router = Router.router(vertx);
+  private EventBus eb;
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
     LOG.info("Starting verticle {" + this + "}");
+    this.eb = vertx.eventBus();
     this.EB_ADDRESS = config().getString("eb_address");
     this.retry = config().getInteger("retry");
     this.http_port = config().getInteger("http-port");
@@ -35,7 +38,40 @@ public class FreeboardSseVerticle extends AbstractVerticle {
     //router.route("/sse").handler(eventBusSSEBridge);
     router.get("/").handler(rc -> rc.response().setStatusCode(302).putHeader("location", config().getString("location")).end());
     router.get("/sse/*").handler(EventBusSSEBridge.create());
-    //router.get("/*").handler(StaticHandler.create());
+    router.get("/:req").handler(ctx -> {
+      var body = new JsonObject();
+      var address = "";
+      try {
+        body = new JsonObject(ctx.request().getParam("body"));
+      } catch (Exception ignored) {
+      }
+      try {
+        address = ctx.request().getParam("address");
+      } catch (Exception ignored) {
+      }
+      if (body.isEmpty() || StringUtils.isEmpty(address)) {
+        ctx.response().setStatusCode(400).end();
+      } else {
+        String req = ctx.pathParam("req");
+        switch (req){
+          case "msg":
+            eb.publish(address,body);
+            ctx.response().setStatusCode(200).end("OK");
+            break;
+          case "cmd":
+            eb.request(address, body, res -> {
+              if (res.succeeded())
+                ctx.response().setStatusCode(200).end(res.result().body().toString());
+              else
+                ctx.response().setStatusCode(500).end(res.cause().getMessage());
+            });
+            break;
+          default:
+            ctx.response().setStatusCode(400).end();
+        }
+      }
+
+    });
     final Router main = ShareableRouter.router(vertx);
     main.mountSubRouter("/freeboard", router);
     if (config().getBoolean("server")) {

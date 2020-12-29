@@ -58,6 +58,7 @@
     });
 
     freeboard.addStyle('.indicator-light.interactive:hover', "box-shadow: 0px 0px 15px #FF9900; cursor: pointer;");
+    let urlOn, urlOff;
     var actuator = function (settings) {
         var self = this;
         var titleElement = $('<h2 class="section-title"></h2>');
@@ -86,7 +87,7 @@
 
             var new_val = !isOn
             this.onCalculatedValueChanged('value', new_val);
-            url = (new_val) ? currentSettings.urlOn : currentSettings.urlOff;
+            url = (new_val) ? urlOn : urlOff;
             if (_.isUndefined(url))
                 freeboard.showDialog($("<div align='center'>url undefined</div>"), "Error!", "OK", null, function () {
                 });
@@ -117,6 +118,12 @@
             if (settingName == "off_text") {
                 offText = newValue;
             }
+          if (settingName == "urlOn") {
+            urlOn = newValue;
+          }
+          if (settingName == "urlOff") {
+            urlOff = newValue;
+          }
             updateState();
         }
 
