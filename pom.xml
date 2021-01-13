@@ -36,6 +36,10 @@
   <dependencies>
     <dependency>
       <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
     </dependency>
     <dependency>
@@ -82,11 +86,11 @@
       <artifactId>vertx-health-check</artifactId>
       <!--<version>4.0.1-SNAPSHOT</version>-->
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>	org.webjars.npm</groupId>
-      <artifactId>	vertx__eventbus-bridge-client.js</artifactId>
+      <artifactId>vertx__eventbus-bridge-client.js</artifactId>
       <version>	1.0.0-1</version>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>

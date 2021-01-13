@@ -43,6 +43,19 @@ public class BarVerticle extends AbstractVerticle {
       }
     });
     //startPromise.complete();
+    Future<String> future = DoSomthingLazy("Encripted Message", 5);
+    System.out.println("Future initiated");
+    future.onComplete(res -> {
+      System.out.println("Future completed with res: " + res.result());
+    });
   }
 
+  private Future<String> DoSomthingLazy(String encripted_message, int i) {
+    Promise<String> promise = Promise.promise();
+    vertx.setTimer(i * 1000, id -> {
+      System.out.println("And " + i + " second later " + encripted_message + " is printed");
+      promise.complete(encripted_message + " returned back!!!!");
+    });
+    return promise.future();
+  }
 }
